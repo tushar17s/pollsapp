@@ -1,0 +1,13 @@
+{% extends "index.html" %}
+{% block content %}
+{% if request.user.is_authenticated %}
+<h1>hello dear {{request.user.username }} , Welcome!! ;</h1>
+{% else %}
+<h1>Bhai <i>LogIn</i> ya <i>SignUp</i> kar le !!</h1>
+{% endif %}
+{% if messages %}
+{% for msg in messages %}
+<div style ="color : red ;">{{msg}}</div>
+{% endfor %}
+{% endif %}
+{% endblock content %}
