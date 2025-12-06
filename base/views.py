@@ -60,3 +60,9 @@ def log_out(request) :
     logout(request)
     messages.success(request,"logged out successfully!!")
     return redirect("home")
+
+def profile(request):
+    # it is lock on profile , it only only if user is logged in
+    if request.user.is_authenticated :
+        return render(request,"base/profile.html")
+    return render(request,"base/login.html")
