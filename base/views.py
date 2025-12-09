@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout 
+from .models import Poll , PollOption , Vote
 # Create your views here.
 def home(request) :
     return render(request , "base/home.html")
@@ -66,3 +67,30 @@ def profile(request):
     if request.user.is_authenticated :
         return render(request,"base/profile.html")
     return render(request,"base/login.html")
+
+def create_poll(request):
+    #  using form
+    if request.method == "POST" :
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        category = request.POST.get('category')
+        is_public = True if request.POST.get('is_public') else False 
+        option = request.POST.getlist('option')
+        created_by = request.user
+        
+        poll = Poll.objects.create(title = title , description = description , 
+                                   category = category,
+                                   is_public = is_public ,
+                                   created_by = created_by 
+                                   )
+        
+        for opt in option :
+            polloption = PollOption.objects.create(
+                # option_text = opt,
+                #                                    poll_id = Poll.objects.get(id=poll.poll.id)
+                # FK assignment works using object, not ID.
+                option_text = opt , poll = poll
+                                                   )
+        
+        return redirect('home')
+    return render(request,'base/create_poll.html')
