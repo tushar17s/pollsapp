@@ -11,4 +11,25 @@
 <div style ="color : red ;">{{msg}}</div>
 {% endfor %}
 {% endif %}
+{% for poll in polls %}
+{% comment %} {% if poll.is_active %} {% endcomment %}
+<div class="form-group">
+    poll created by <i>{{poll.created_by}}</i> at <i>{{poll.created_at}}</i>
+    <ul>
+    <li><b>Title  : </b>{{poll.title}}</li>
+    <li><b>Description : </b>{{poll.description}}</li>
+    <li><b>Category : </b>{{poll.category}}</li>
+    </ul>
+    {% for opt in poll.polloption_set.all %}
+    <div class="form-group">
+    {{opt.option_text}}
+    <form method="POST">
+        <label for="voted"><b>Vote</b></label>
+        <input type="checkbox" name="voted">
+    </form>
+    </div>
+    {% endfor %}
+</div>
+{% comment %} {% endif %} {% endcomment %}
+{% endfor %}
 {% endblock content %}
