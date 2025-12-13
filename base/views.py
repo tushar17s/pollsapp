@@ -4,10 +4,20 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout 
 from .models import Poll , PollOption , Vote
+from django.db.models import Count
 # Create your views here.
 def home(request) :
     polls = Poll.objects.all()
-    return render(request , "base/home.html", {"polls":polls})
+    # checking if user voted or not 
+    if request.user.is_authenticated :
+        voted_polls=[]
+        # contains polls id to which user is voted
+        # this one make sure that user only get view result option of that poll which he votted 
+        # by checking is poll id in voted_polls
+        voted_polls=Vote.objects.filter(user=request.user).values_list('poll_id',flat=True)
+        return render(request , "base/home.html", {"polls":polls,'voted_polls':voted_polls})
+    else :
+        return render(request,"base/home.html",{"polls":polls})
     
 def sign_up(request):
     # info collection
@@ -97,3 +107,51 @@ def create_poll(request):
             return redirect('home')
         return render(request,'base/create_poll.html')
     return redirect('login')
+
+def voting(request,poll_id,opt_id) :
+    #  here we do it to validate if these opt and poll exists in model or user injecting it by itself
+    #    like : fake URLs
+
+        # invalid poll IDs
+
+        # invalid option IDs
+    poll = Poll.objects.get(id = poll_id)
+    option = PollOption.objects.get(id = opt_id)
+    # Check if option belongs to poll
+    if option.poll != poll:
+        messages.error(request, "Invalid option selected.")
+        return redirect('home')
+    if Vote.objects.filter(user = request.user, poll = poll).exists() :
+        messages.error(request,"You have already voted on this poll.")
+        return redirect('home')
+    # create vote in Vote model
+    vote = Vote.objects.create(user=request.user,option=option,poll=poll)
+    messages.success(request,"Vote recorded successfully!!")
+    return redirect('home')
+    
+def poll_detail(request,poll_id):
+    opt_text = []
+    opt_vote = []
+    poll = Poll.objects.get(id=poll_id)
+    total_votes = Vote.objects.filter(poll=poll_id).count()
+    option  = poll.polloption_set.annotate(vote_counts=Count('vote'))
+    for opt in option :
+        opt_text.append(opt.option_text)
+        opt_vote.append(opt.vote_counts)
+        
+    #  Django ORM → Python lists → JavaScript arrays
+    
+    for opt in option:
+        if total_votes > 0:
+            opt.percentage = round((opt.vote_counts / total_votes) * 100, 2)
+        else:
+            opt.percentage = 0
+     
+    
+    # vote = vote_set , set containing vote id to a specific option
+    return render(request,'base/poll_detail.html',{'option':option, 
+                                                   'poll':poll,
+                                                   'opt_text':opt_text,
+                                                   'opt_vote':opt_vote
+                                                   })
+    

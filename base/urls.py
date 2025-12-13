@@ -8,4 +8,6 @@ urlpatterns = [
     path('logout/', views.log_out , name = 'logout' ),
     path('profile/', views.profile , name = 'profile' ),
     path('create_poll/', views.create_poll , name = 'create' ),
+    path('voting/<int:poll_id>/<int:opt_id>/', views.voting , name = 'voting' ),
+    path('detail/<int:poll_id>/', views.poll_detail , name = 'detail' ),
 ]

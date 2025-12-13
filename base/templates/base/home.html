@@ -23,12 +23,16 @@
     {% for opt in poll.polloption_set.all %}
     <div class="form-group">
     {{opt.option_text}}
-    <form method="POST">
-        <label for="voted"><b>Vote</b></label>
-        <input type="checkbox" name="voted">
-    </form>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'voting' poll.id opt.id %}">Vote</a>
+    {% else %}
+    <b>Vote</b>
+    {% endif %}
     </div>
     {% endfor %}
+    {% if poll.id in voted_polls %}
+    <a href="{% url 'detail' poll.id %}">View Result</a>
+    {% endif %}
 </div>
 {% comment %} {% endif %} {% endcomment %}
 {% endfor %}

@@ -1,0 +1,52 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+<a href="{% url 'home'%}"><b>Back to Homepage</b></a>
+<div class="form-group">
+    poll created by <i>{{poll.created_by}}</i> at <i>{{poll.created_at}}</i>
+    <ul>
+    <li><b>Title  : </b>{{poll.title}}</li>
+    <li><b>Description : </b>{{poll.description}}</li>
+    <li><b>Category : </b>{{poll.category}}</li>
+    </ul>
+    {% for opt in option %}
+    <div class="form-group">
+    {{ opt.option_text }} — {{ opt.vote_counts }} votes ({{ opt.percentage }}%)
+    </div>
+    {% endfor %}
+    <div class="chart-container">
+        <canvas id="pollchart">
+        {% comment %} area to draw  {% endcomment %}
+    </canvas>
+    </div>
+    {% comment %} Load Chart.js FIRST {% endcomment %}
+    {% comment %} Django passes data → JS renders chart {% endcomment %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            {% comment %} Bridge Django → JavaScript (YOU CODE) {% endcomment %}
+            const labels = {{ opt_text|safe }};
+            const votes = {{ opt_vote|safe }};
+            const ctx = document.getElementById("pollchart").getContext("2d");
+            {% comment %} Create the Chart {% endcomment %}
+            new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: votes
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+
+        </script>
+
+        {% comment %} |safe restrict django behaviour of escaping the variable to safe html  {% endcomment %}
+    
+    
+
+{% endblock content %}
