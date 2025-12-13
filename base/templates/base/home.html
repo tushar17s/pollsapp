@@ -3,17 +3,20 @@
 {% block content %}
 {% if request.user.is_authenticated %}
 <h1>hello dear {{request.user.username }} , Welcome!! ;</h1>
+<hr>
 {% else %}
 <h1>Bhai <i>LogIn</i> ya <i>SignUp</i> kar le !!</h1>
+<hr>
 {% endif %}
 {% if messages %}
 {% for msg in messages %}
 <div style ="color : red ;">{{msg}}</div>
 {% endfor %}
 {% endif %}
+<div style = "margin-left: 40px;">
 {% for poll in polls %}
 {% comment %} {% if poll.is_active %} {% endcomment %}
-<div class="form-group">
+<div class="form-group" style="justify:center";>
     poll created by <i>{{poll.created_by}}</i> at <i>{{poll.created_at}}</i>
     <ul>
     <li><b>Title  : </b>{{poll.title}}</li>
@@ -21,19 +24,25 @@
     <li><b>Category : </b>{{poll.category}}</li>
     </ul>
     {% for opt in poll.polloption_set.all %}
-    <div class="form-group">
+    <p><div class="form-group">
     {{opt.option_text}}
+    </div>
     {% if request.user.is_authenticated %}
-    <a href="{% url 'voting' poll.id opt.id %}">Vote</a>
+    {% if not poll.id in voted_polls %}
+    <a href="{% url 'voting' poll.id opt.id %}">Vote</a></p>
+    {% endif %}
     {% else %}
     <b>Vote</b>
     {% endif %}
-    </div>
     {% endfor %}
     {% if poll.id in voted_polls %}
+    <b style = "color:red ;" >You already voted</b><br>
     <a href="{% url 'detail' poll.id %}">View Result</a>
     {% endif %}
 </div>
 {% comment %} {% endif %} {% endcomment %}
+<hr>
+<br>
 {% endfor %}
+</div>
 {% endblock content %}

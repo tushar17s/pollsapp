@@ -144,6 +144,7 @@ def poll_detail(request,poll_id):
     for opt in option:
         if total_votes > 0:
             opt.percentage = round((opt.vote_counts / total_votes) * 100, 2)
+            # opt.percentage is field object 
         else:
             opt.percentage = 0
      
