@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout 
-from .models import Poll , PollOption , Vote
+from .models import Poll , PollOption , Vote , comment
 from django.db.models import Count
 # Create your views here.
 def home(request) :
@@ -14,6 +14,8 @@ def home(request) :
         # contains polls id to which user is voted
         # this one make sure that user only get view result option of that poll which he votted 
         # by checking is poll id in voted_polls
+        
+        
         voted_polls=Vote.objects.filter(user=request.user).values_list('poll_id',flat=True)
         return render(request , "base/home.html", {"polls":polls,'voted_polls':voted_polls})
     else :
@@ -138,21 +140,39 @@ def poll_detail(request,poll_id):
     for opt in option :
         opt_text.append(opt.option_text)
         opt_vote.append(opt.vote_counts)
-        
-    #  Django ORM → Python lists → JavaScript arrays
     
+    #  Django ORM → Python lists → JavaScript arrays
     for opt in option:
         if total_votes > 0:
             opt.percentage = round((opt.vote_counts / total_votes) * 100, 2)
             # opt.percentage is field object 
         else:
             opt.percentage = 0
-     
+    
+    comments = comment.objects.filter(poll = poll).order_by("-commented_on")
     
     # vote = vote_set , set containing vote id to a specific option
     return render(request,'base/poll_detail.html',{'option':option, 
                                                    'poll':poll,
                                                    'opt_text':opt_text,
-                                                   'opt_vote':opt_vote
+                                                   'opt_vote':opt_vote,
+                                                   'comments':comments,
+                                                   
                                                    })
     
+def comment_func(request,poll_id):
+    if request.method == "POST" and request.user.is_authenticated :
+        msg= request.POST.get("message")
+        poll = Poll.objects.get(id = poll_id)
+        comment.objects.create(user=request.user ,
+                               comment_text = msg,
+                               poll = poll
+                               )
+        return redirect("detail", poll_id=poll_id)
+    return redirect("detail", poll_id=poll_id)
+    
+def hide_comment(request,comment_id,poll_id):
+    
+    message = comment.objects.get(id=comment_id)
+    message.delete()
+    return redirect("detail", poll_id=poll_id)

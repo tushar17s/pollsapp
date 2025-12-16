@@ -18,3 +18,13 @@ class Vote(models.Model):
     option = models.ForeignKey(PollOption,on_delete=models.CASCADE)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+class comment(models.Model) :
+    poll = models.ForeignKey(Poll,on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    comment_text = models.TextField(max_length=100)
+    commented_on = models.DateTimeField(auto_now_add=True)
+    
+    
+    
+    

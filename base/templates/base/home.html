@@ -16,7 +16,7 @@
 <div style = "margin-left: 40px;">
 {% for poll in polls %}
 {% comment %} {% if poll.is_active %} {% endcomment %}
-<div class="form-group" style="justify:center";>
+<div class="form-group">
     poll created by <i>{{poll.created_by}}</i> at <i>{{poll.created_at}}</i>
     <ul>
     <li><b>Title  : </b>{{poll.title}}</li>
@@ -38,6 +38,7 @@
     {% if poll.id in voted_polls %}
     <b style = "color:red ;" >You already voted</b><br>
     <a href="{% url 'detail' poll.id %}">View Result</a>
+    <a href="{% url 'detail' poll.id %}"><b><i>Add your comment </i></b></a>
     {% endif %}
 </div>
 {% comment %} {% endif %} {% endcomment %}

@@ -10,4 +10,6 @@ urlpatterns = [
     path('create_poll/', views.create_poll , name = 'create' ),
     path('voting/<int:poll_id>/<int:opt_id>/', views.voting , name = 'voting' ),
     path('detail/<int:poll_id>/', views.poll_detail , name = 'detail' ),
+    path('comment/<int:poll_id>/', views.comment_func , name = 'comment' ),
+    path('hide/<int:comment_id>/<int:poll_id>/', views.hide_comment , name = 'hide_comment' ),
 ]
