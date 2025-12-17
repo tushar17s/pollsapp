@@ -16,6 +16,8 @@
     </div>
     {% endfor %}
     <br>
+    <b>Total Votes : {{total_votes}}</b>
+    <br>
     <form action="{% url 'comment' poll.id %}" method="post">
         {% csrf_token %}
         <input type="text" placeholder="write your views here" name ="message">

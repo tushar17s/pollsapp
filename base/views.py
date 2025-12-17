@@ -59,7 +59,7 @@ def log_in(request) :
         password = request.POST.get('password')
         
         user = authenticate(request , username=username , password = password)
-        # ye output None or not None me dega
+        # ye output None or not None me dega , check karega ki user database me hai ke nahi
         if user is not None :
             login(request,user)
             messages.success(request,"logged in successfully!!")
@@ -75,10 +75,19 @@ def log_out(request) :
     messages.success(request,"logged out successfully!!")
     return redirect("home")
 
-def profile(request):
+def dashboard(request):
     # it is lock on profile , it only only if user is logged in
     if request.user.is_authenticated :
-        return render(request,"base/profile.html")
+        total_polls = Poll.objects.count()
+        total_votes = Vote.objects.count()
+        total_users = User.objects.count()
+        top_poll = Poll.objects.annotate(vote_count=Count('vote')).order_by('-vote').first 
+        poll_per_category = Poll.objects.values('category').annotate(total_poll=Count('id'))
+        # it says : poll.vote_count
+        return render(request,"base/dashboard.html",{'total_polls':total_polls,
+                                                     'total_votes':total_votes,'total_users':total_users,
+                                                     'top_poll':top_poll,
+                                                     'category_wise':poll_per_category})
     return render(request,"base/login.html")
 
 def create_poll(request):
@@ -157,7 +166,7 @@ def poll_detail(request,poll_id):
                                                    'opt_text':opt_text,
                                                    'opt_vote':opt_vote,
                                                    'comments':comments,
-                                                   
+                                                   'total_votes':total_votes
                                                    })
     
 def comment_func(request,poll_id):
