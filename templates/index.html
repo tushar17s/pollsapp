@@ -44,15 +44,14 @@
           </a>
         </li>
         {% endif %}
-        <li class="nav-item">
+       
+        {% if request.user.is_authenticated %}
+         <li class="nav-item">
           <a href="{% url 'create' %}"
             class="btn btn-primary ms-2">
             + Create Poll
           </a>
         </li>
-
-        {% if request.user.is_authenticated %}
-
         <li class="nav-item">
           <div class="d-flex align-items-center gap-2 nav-link">
 
