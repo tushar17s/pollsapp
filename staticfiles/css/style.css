@@ -1,0 +1,11 @@
+.chart-container {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;        /* THIS is the key */
+    margin: 30px auto;
+}
+
+a {
+  text-decoration: none;
+}
+
