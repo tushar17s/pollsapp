@@ -9,7 +9,7 @@
 
     <h4 class="text-center mb-4">Create New Poll</h4>
 
-    <form method="post">
+    <form method="post" action="{% url 'create' %}">
       {% csrf_token %}
 
       <!-- Title -->
