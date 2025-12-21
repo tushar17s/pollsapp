@@ -1,60 +1,79 @@
-# 🗳️ Dynamic Polling & Voting Web Application  
-A full-stack polling platform built with **Django**, **PostgreSQL**, and **Chart.js**, allowing users to create polls, vote securely, and view results with real-time graphical analytics.
+# PollsApp — Secure Polling Web Application
+
+PollsApp is a Django-based web application that allows users to create polls, vote securely, and view results with dynamic analytics.  
+The project focuses on clean backend logic, data integrity, and proper separation of concerns rather than UI-heavy features.
+
+This project was built to deeply understand Django ORM, authentication, authorization, and real-world backend workflows.
 
 ---
 
-## 🚀 Features
+## Features
 
-### 🔐 Authentication System
-- User signup, login, logout
-- Session-based authentication
-- Access control for poll creation & voting
-- Unauthorized users restricted from voting
-
-### 📊 Poll Creation
-- Create polls with multiple dynamic options
-- Add category, description, visibility, and expiry date
-- JavaScript-based dynamic option fields
-
-### 🗳️ Secure Voting System
-- One vote per user (duplicate-vote prevention)
-- URL validation to prevent poll/option tampering
-- Real-time vote recording
-
-### 📈 Results & Analytics
-- Vote count per option using Django ORM (`annotate`)
-- Percentage calculations for each option
-- Interactive charts using **Chart.js**:
-  - Pie Chart
-  - Bar Chart
-- Total votes summary
-
-### 🧩 REST API (Django REST Framework)
-- `/api/polls/` — List all polls  
-- `/api/polls/<id>/` — Poll details  
-- `/api/polls/<id>/vote/` — Submit vote  
-- `/api/polls/<id>/results/` — Poll results  
-
-### ⚙️ Admin Dashboard
-- Manage users, polls, options, votes
-- View analytics & stats
-- Category filters & monthly poll insights
-
-### 🔧 Deployment & DB
-- SQLite for development, PostgreSQL for production
-- Environment variable-based configuration
-- Deployed on Render / Railway (optional)
+- User authentication (signup, login, logout)
+- Poll creation with multiple options
+- One-vote-per-user enforcement
+- Dynamic result calculation (no derived data stored)
+- Vote results visualization using Chart.js
+- Comment system with owner-based moderation
+- Hot poll highlighting based on vote count
+- User-specific dashboard with analytics
+- REST APIs built using Django REST Framework
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-**Backend:** Django, Django REST Framework  
-**Frontend:** HTML, CSS, Bootstrap, JavaScript, Chart.js  
-**Database:** PostgreSQL / SQLite  
-**Tools:** Git, GitHub, VS Code, Postman  
+- Backend: Django
+- ORM: Django ORM (aggregation, annotations)
+- Database: SQLite (PostgreSQL-ready)
+- Frontend: HTML, CSS, Bootstrap
+- Charts: Chart.js
+- APIs: Django REST Framework
 
 ---
 
-## 📂 Project Structure
+## Architecture & Design Decisions
 
+- Business logic is handled in views, not templates
+- Authorization checks are enforced at the view level
+- Vote percentages are calculated dynamically to avoid stale data
+- ORM aggregation (`annotate`, `count`, `exists`) is used for analytics
+- Foreign key relationships are used to maintain data integrity
+- REST APIs reuse the same models and logic as template-based views
+
+---
+
+## Setup Instructions (Local)
+
+
+git clone <repository-url>
+cd pollsapp
+python -m venv myenv
+source myenv/bin/activate   # Windows: myenv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
+#  What I Learned
+
+How Django handles authentication and request lifecycle
+
+Proper use of ORM aggregation instead of manual data handling
+
+Difference between objects and IDs in ForeignKey relationships
+
+Why permissions should be enforced in views, not templates
+
+How REST APIs coexist with template-rendered views
+
+How to design features with security and scalability in mind
+
+Future Improvements
+
+Real-time voting updates using WebSockets
+
+Advanced poll moderation features
+
+Deployment with PostgreSQL
+
+API authentication for external clients
