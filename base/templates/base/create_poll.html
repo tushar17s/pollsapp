@@ -1,19 +1,102 @@
 {% extends "index.html" %}
 {% load static %}
+
 {% block content %}
 
-<form method="post">
-    <div class="form-group">
-    {% csrf_token %}
-    <input type="text" name="title" placeholder="title" class="form-control"></div>
-    <input type="text" name="description" placeholder="description" class="form-control">
-    <input type="text" name="option" placeholder="option1" class="form-control">
-    <input type="text" name="option" placeholder="option2" class="form-control">
-    <input type="text" name="option" placeholder="option3" class="form-control">
-    <input type="text" name="category" placeholder="category" class="form-control">
-    <label for="is_public">is_public</label>
-    <input type="checkbox" name="is_public" placeholder="is public" >
-    <button type="submit" class="form-control"><b><i>Create</i></b></button>
-    
-</form>
+<div class="container d-flex justify-content-center my-5">
+
+  <div class="card shadow-sm p-4" style="width: 100%; max-width: 600px;">
+
+    <h4 class="text-center mb-4">Create New Poll</h4>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- Title -->
+      <div class="mb-3">
+        <input
+          type="text"
+          name="title"
+          class="form-control"
+          placeholder="Poll Title"
+          required
+        >
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <input
+          type="text"
+          name="description"
+          class="form-control"
+          placeholder="Poll Description"
+        >
+      </div>
+
+      <!-- Options -->
+      <div class="mb-3">
+        <input
+          type="text"
+          name="option"
+          class="form-control"
+          placeholder="Option 1"
+          required
+        >
+      </div>
+
+      <div class="mb-3">
+        <input
+          type="text"
+          name="option"
+          class="form-control"
+          placeholder="Option 2"
+          required
+        >
+      </div>
+
+      <div class="mb-3">
+        <input
+          type="text"
+          name="option"
+          class="form-control"
+          placeholder="Option 3"
+        >
+      </div>
+
+      <!-- Category -->
+      <div class="mb-3">
+        <input
+          type="text"
+          name="category"
+          class="form-control"
+          placeholder="Category"
+        >
+      </div>
+
+      <!-- Public Checkbox -->
+      <div class="form-check mb-4">
+        <input
+          type="checkbox"
+          name="is_public"
+          class="form-check-input"
+          id="is_public"
+        >
+        <label class="form-check-label" for="is_public">
+          Make this poll public
+        </label>
+      </div>
+
+      <!-- Submit -->
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success">
+          Create Poll
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
 {% endblock content %}

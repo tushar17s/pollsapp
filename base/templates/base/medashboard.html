@@ -1,0 +1,112 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container my-4">
+
+  
+
+  <!-- 🔙 Back -->
+  <a href="{% url 'home' %}" class="btn btn-sm btn-outline-secondary mb-3">
+    ← Back to Homepage
+  </a>
+
+  <!-- 🔹 Dashboard Navigation -->
+  <div class="mb-4">
+    <div class="btn-group" role="group">
+      <a href="{% url 'dashboard' %}" class="btn btn-outline-success">
+        System Dashboard
+      </a>
+
+    </div>
+  </div>
+
+  <!-- 🔹 Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">My Dashboard</h3>
+
+    <a href="{% url 'create' %}" class="btn btn-primary">
+      + Create Poll
+    </a>
+  </div>
+{% if not polls %}
+ <div class="col-md-8">
+    <div class="card shadow-sm">
+        <div class="card-body">
+          <p class="mb-0">
+            Nothing to Show
+          </p>
+        </div>
+      </div>
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted mb-2">Quick Tip</h6>
+          <p class="mb-0">
+            Create engaging questions to get more votes and feedback.
+          </p>
+        </div>
+      </div>
+    </div>
+{% else %}
+  <!-- 🔹 STATS -->
+  <div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Your Total Polls</h6>
+          <h2 class="fw-bold">{{ total_polls }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="text-muted mb-2">Quick Tip</h6>
+          <p class="mb-0">
+            Create engaging questions to get more votes and feedback.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 🔹 POLLS LIST -->
+  <div class="card shadow-sm">
+
+    <div class="card-body">
+      <h5 class="card-title mb-3">Polls Created by You</h5>
+
+      {% if polls %}
+        {% for item in polls %}
+          <div class="d-flex justify-content-between align-items-center
+                      border-bottom py-3">
+
+            <div>
+              <a href="{% url 'detail' item.id %}" class="fw-semibold">
+                {{ item.title }}
+              </a>
+              <div class="small text-muted">
+                Created on {{ item.created_at }}
+              </div>
+            </div>
+
+            <span class="badge bg-primary rounded-pill">
+              {{ item.total_vote }} votes
+            </span>
+
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted mb-0">You haven’t created any polls yet.</p>
+      {% endif %}
+
+    </div>
+
+  </div>
+
+</div>
+{% endif %}
+{% endblock %}

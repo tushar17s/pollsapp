@@ -1,18 +1,72 @@
 {% extends "index.html" %}
 {% load static %}
-{% block content%}
-    <hr>
+{% block content %}
+<a href="{% url 'home' %}" class="btn btn-outline-secondary mb-3">
+    ← Back to Homepage
+  </a>
+  <div class="mb-4">
+    <div class="btn-group" role="group">
 
-<div style="margin-left:40px;">
-total polls exists : {{total_polls}} <br>
-total votes till today : {{total_votes}} <br>
-total users till today : {{total_users}} <br>
-    <div>most voted poll till today : <a href="{% url 'detail' top_poll.id%}">{{top_poll.title}}</a>
-    <b>Category :</b> {{top_poll.category}} <br>
+      <a href="{% url 'medashboard' %}" class="btn btn-outline-primary">
+        My Dashboard
+      </a>
+    </div>
+  <br>
+
+<div class="container my-4">
+
+  <h3 class="mb-4"> System Dashboard Overview</h3>
+
+  <!-- 🔹 TOP STATS -->
+  <div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h6 class="text-muted">Total Polls</h6>
+          <h3 class="fw-bold">{{ total_polls }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h6 class="text-muted">Total Votes</h6>
+          <h3 class="fw-bold">{{ total_votes }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h6 class="text-muted">Total Users</h6>
+          <h3 class="fw-bold">{{ total_users }}</h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- 🔹 POLLS PER CATEGORY -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Polls per Category</h5>
+
+      {% for item in category_wise %}
+        <div class="d-flex justify-content-between border-bottom py-2">
+          <span>{{ item.category }}</span>
+          <span class="badge bg-primary">
+            {{ item.total_poll }}
+          </span>
+        </div>
+      {% endfor %}
+
+    </div>
+  </div>
+
 </div>
-polls per category : <br>
-{% for item in category_wise %}
-<b>{{ item.category }}</b> → {{ item.total_poll }}
-{% endfor %}
-</div>
-{% endblock  %}
+
+{% endblock %}

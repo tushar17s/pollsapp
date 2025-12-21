@@ -1,77 +1,165 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-<a href="{% url 'home'%}"><b>Back to Homepage</b></a>
-<hr>
-<div class="form-group" style = "margin-left: 40px; display:flex;">
-    <div>poll created by <i>{{poll.created_by}}</i> at <i>{{poll.created_at}}</i>
-    <ul>
-    <li><b>Title  : </b>{{poll.title}}</li>
-    <li><b>Description : </b>{{poll.description}}</li>
-    <li><b>Category : </b>{{poll.category}}</li>
-    </ul>
-    {% for opt in option %}
-    <div class="form-group">
-    {{ opt.option_text }} — {{ opt.vote_counts }} votes ({{ opt.percentage }}%)
-    </div>
-    {% endfor %}
-    <br>
-    <b>Total Votes : {{total_votes}}</b>
-    <br>
-    <form action="{% url 'comment' poll.id %}" method="post">
-        {% csrf_token %}
-        <input type="text" placeholder="write your views here" name ="message">
-        <button>Post</button>
-    </form>
-    <br>
-    {% if comments %}
-    <b>Recent Views :</b>
-    {% endif %}
-    {% for comment in comments %}
-    <div class="form-group">
-        {{comment.comment_text}}
-        <i><b>by-{{comment.user.username}} at {{comment.commented_on}} </b></i>
-        {% if request.user == comment.poll.created_by %}
-        <a href="{% url 'hide_comment' comment.id poll.id %}">Hide</a>
-    {% endif %}
+
+<div class="container my-4">
+
+  <!-- 🔙 Back -->
+  <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-3">
+    ← Back to Homepage
+  </a>
+
+  <div class="row g-4">
+
+    <!-- 🔹 LEFT: Poll Details -->
+    <div class="col-lg-7">
+
+      <div class="card shadow-sm">
+
+        <!-- Header -->
+        <div class="card-header text-muted">
+          Poll created by <b>{{ poll.created_by }}</b>
+          <span class="float-end">{{ poll.created_at }}</span>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body">
+
+          <h4 class="card-title">{{ poll.title }}</h4>
+          <p class="card-text">{{ poll.description }}</p>
+
+          <p class="text-secondary">
+            <b>Category:</b> {{ poll.category }}
+          </p>
+
+          <hr>
+
+          <!-- Options & Votes -->
+          {% for opt in option %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span>{{ opt.option_text }}</span>
+              <span class="badge bg-primary">
+                {{ opt.vote_counts }} votes ({{ opt.percentage }}%)
+              </span>
+            </div>
+          {% endfor %}
+
+          <hr>
+
+          <p class="fw-bold">
+            Total Votes: {{ total_votes }}
+          </p>
+          {% if request.user == poll.created_by %}
+        <a href="{% url 'delete_poll' poll.id %}" class="btn btn-sm btn-outline-danger">
+          Delete Poll
+        </a>
+        {% endif %}
+        </div>
+
+      </div>
+
+      <!-- 💬 Comment Box -->
+      <div class="card shadow-sm mt-4">
+
+        <div class="card-body">
+          <h5 class="mb-3">Add Your View</h5>
+
+          <form action="{% url 'comment' poll.id %}" method="post">
+            {% csrf_token %}
+
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Write your views here"
+                name="message"
+                required
+              >
+              <button class="btn btn-success">Post</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- 📝 Comments -->
+      {% if comments %}
+      <div class="card shadow-sm mt-4">
+
+        <div class="card-body">
+          <h5 class="mb-3">Recent Views</h5>
+
+          {% for comment in comments %}
+            <div class="border rounded p-2 mb-2">
+
+              <p class="mb-1">{{ comment.comment_text }}</p>
+
+              <small class="text-muted">
+                by <b>{{ comment.user.username }}</b>
+                at {{ comment.commented_on }}
+              </small>
+
+              {% if request.user == comment.poll.created_by %}
+                <div>
+                  <a href="{% url 'hide_comment' comment.id poll.id %}"
+                     class="btn btn-sm btn-outline-danger mt-1">
+                    Hide
+                  </a>
+                </div>
+              {% endif %}
+
+            </div>
+          {% endfor %}
+
+        </div>
+
+      </div>
+      {% endif %}
 
     </div>
-    {% endfor %}
-    </div>
-    <div>
-    <div class="chart-container">
-        <canvas id="pollchart">
-        {% comment %} area to draw  {% endcomment %}
-    </canvas>
-    </div>
-    {% comment %} Load Chart.js FIRST {% endcomment %}
-    {% comment %} Django passes data → JS renders chart {% endcomment %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            {% comment %} Bridge Django → JavaScript (YOU CODE) {% endcomment %}
-            const labels = {{ opt_text|safe }};
-            const votes = {{ opt_vote|safe }};
-            const ctx = document.getElementById("pollchart").getContext("2d");
-            {% comment %} Create the Chart {% endcomment %}
-            new Chart(ctx, {
-                type: "pie",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: votes
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
 
+    <!-- 🔹 RIGHT: Chart -->
+    <div class="col-lg-5">
 
-        </script>
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="text-center mb-3">Poll Result Chart</h5>
 
-        {% comment %} |safe restrict django behaviour of escaping the variable to safe html  {% endcomment %}
-    
+          <div style="height:300px;">
+            <canvas id="pollchart"></canvas>
+          </div>
+
+        </div>
+      </div>
+
     </div>
+
+  </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const labels = {{ opt_text|safe }};
+  const votes = {{ opt_vote|safe }};
+
+  const ctx = document.getElementById("pollchart").getContext("2d");
+
+  new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: votes
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+</script>
 
 {% endblock content %}

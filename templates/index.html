@@ -2,31 +2,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href={% static "css/style.css" %}>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <title>PollsApp</title>
 </head>
-<body>
-    <header>
-        <nav>
-            <a href="{% url 'home' %}">PollsApp Welcomes you !!</a>
-            <a href="{% url 'dashboard' %}">Dashboard</a>
-            <a href="{% url 'create' %}"><b>create a poll</b></a>
-            {% if  request.user.is_authenticated %}
-            <a href="{% url 'logout' %}">Log Out</a>
-            {% else %}
-            <a href="{% url 'signup' %}">Sign Up</a>
-            <a href="{% url 'login' %}">Log In</a>
-            {% endif %}
-            
-        </nav>
-    </header>
-    <main>
-        {% block content %}
-        {% endblock  %}
 
-    </main>
+<body>
+
+<!-- ✅ STICKY NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary sticky-top shadow-sm">
+
+  <div class="container-fluid">
+
+    <a class="navbar-brand fw-bold nav-brand-hover" href="{% url 'home' %}">
+  PollsApp
+</a>
+    <!-- Toggle button -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar items -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      
+      <ul class="navbar-nav ms-auto">
+      {% if request.user.is_authenticated %}
+        <li class="nav-item">
+          <a href="{% url 'dashboard' %}"
+            class="nav-link fw-semibold nav-dashboard-hover">
+            📊 Dashboard
+          </a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a href="{% url 'create' %}"
+            class="btn btn-primary ms-2">
+            + Create Poll
+          </a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+
+        <li class="nav-item">
+          <div class="d-flex align-items-center gap-2 nav-link">
+
+            <span class="fw-semibold">
+              {{ request.user.username }}
+            </span>
+
+            <span class="text-muted">|</span>
+
+            <a href="{% url 'logout' %}" class="text-danger text-decoration-none">
+              Logout
+            </a>
+
+          </div>
+        </li>
+        {% else %}
+        <li class="nav-item d-flex align-items-center">
+          <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+
+          <span class="mx-2 text-muted">|</span>
+
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+        {% endif %}
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ✅ PAGE CONTENT -->
+<main class="container my-4">
+    {% block content %}
+    {% endblock %}
+</main>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

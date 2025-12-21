@@ -2,48 +2,173 @@
 {% load static %}
 {% block content %}
 {% if request.user.is_authenticated %}
-<h1>hello dear {{request.user.username }} , Welcome!! ;</h1>
+<div class="text-center my-4">
+  <h2 class="fw-bold">Welcome to <span class="text-primary">PollsApp</span> 👋</h2>
+  <p class="text-muted mb-0">
+    Create polls, vote, and share your opinions.
+  </p>
+</div>
 <hr>
 {% else %}
-<h1>Bhai <i>LogIn</i> ya <i>SignUp</i> kar le !!</h1>
+<p class="text-center text-muted">
+  <a href="{% url 'login' %}" class="text-primary fw-semibold">
+    Login
+  </a>
+  or
+  <a href="{% url 'signup' %}" class="text-success fw-semibold">
+    Register
+  </a>
+  to vote and comment
+</p>
+
 <hr>
 {% endif %}
 {% if messages %}
 {% for msg in messages %}
-<div style ="color : red ;">{{msg}}</div>
+<div class="alert alert-danger text-center py-2 mb-2" role="alert">{{msg}}</div>
 {% endfor %}
+<script>
+  setTimeout(() => {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => alert.remove());
+  }, 3000);
+</script>
 {% endif %}
-<div style = "margin-left: 40px;">
+<div class="container my-4">
+
 {% for poll in polls %}
-{% comment %} {% if poll.is_active %} {% endcomment %}
-<div class="form-group">
-    poll created by <i>{{poll.created_by}}</i> at <i>{{poll.created_at}}</i>
-    <ul>
-    <li><b>Title  : </b>{{poll.title}}</li>
-    <li><b>Description : </b>{{poll.description}}</li>
-    <li><b>Category : </b>{{poll.category}}</li>
-    </ul>
-    {% for opt in poll.polloption_set.all %}
-    <p><div class="form-group">
-    {{opt.option_text}}
-    </div>
-    {% if request.user.is_authenticated %}
-    {% if not poll.id in voted_polls %}
-    <a href="{% url 'voting' poll.id opt.id %}">Vote</a></p>
-    {% endif %}
-    {% else %}
-    <b>Vote</b>
-    {% endif %}
-    {% endfor %}
-    {% if poll.id in voted_polls %}
-    <b style = "color:red ;" >You already voted</b><br>
-    <a href="{% url 'detail' poll.id %}">View Result</a>
-    <a href="{% url 'detail' poll.id %}"><b><i>Add your comment </i></b></a>
-    {% endif %}
-</div>
-{% comment %} {% endif %} {% endcomment %}
-<hr>
+{% if poll.id == hot_poll.id %}
+
+  <div class="card-body">
+    <span class="badge bg-danger">🔥 Most Voted</span>
+  </div>
+
+{% endif %}
+<div class="card mb-4 shadow-sm position-relative">
+
+{% if poll.id in voted_polls %}
+  <span class="position-absolute top-0 end-0 badge bg-success m-2">
+    Voted
+  </span>
+{% else %}
+  <span class="position-absolute top-0 end-0 badge bg-secondary m-2">
+    Not Voted
+  </span>
+{% endif %}
+
 <br>
+  <!-- 🔹 Card Header -->
+  <div class="card-header text-muted">
+    Poll created by <b>{{ poll.created_by }}</b>
+    <span class="float-end">
+      {{ poll.created_at }}
+    </span>
+  </div>
+
+  <!-- 🔹 Card Body -->
+  <div class="card-body">
+
+    <h5 class="card-title">{{ poll.title }}</h5>
+
+    <p class="card-text">
+      {{ poll.description }}
+    </p>
+
+    <p class="text-secondary">
+      <b>Category:</b> {{ poll.category }}
+    </p>
+
+    <!-- 🔹 Poll Options -->
+<ul class="list-group list-group-flush mt-3">
+
+{% for opt in poll.polloption_set.all %}
+  <li class="list-group-item border-0 d-flex justify-content-center">
+
+    <div class="card shadow-sm w-75">
+
+      <div class="card-body py-2 px-3 text-center">
+
+        {% if request.user.is_authenticated %}
+          {% if not poll.id in voted_polls %}
+            <a href="{% url 'voting' poll.id opt.id %}"
+               class="stretched-link text-decoration-none small fw-semibold">
+              {{ opt.option_text }}
+            </a>
+          {% else %}
+            <span class="small text-muted fw-semibold">
+              {{ opt.option_text }}
+            </span>
+          {% endif %}
+        {% else %}
+          <span class="small text-muted fw-semibold">
+            {{ opt.option_text }}
+          </span>
+        {% endif %}
+
+      </div>
+
+    </div>
+
+  </li>
 {% endfor %}
+
+</ul>
+
+
+  </div>
+
+  <!-- 🔹 Card Footer -->
+  <div class="card-footer bg-light">
+
+    {% if poll.id in voted_polls %}
+     
+      <div class="mt-2">
+        <a href="{% url 'detail' poll.id %}" class="btn btn-sm btn-success">
+          View Result
+        </a>
+        <a href="{% url 'undo' poll.id %}" class="btn btn-sm btn-success">
+          Undo
+        </a>
+        <a href="{% url 'detail' poll.id %}" class="btn btn-sm btn-outline-secondary">
+          View or Add Comment
+        </a>
+        {% if request.user == poll.created_by %}
+        <a href="{% url 'delete_poll' poll.id %}" class="btn btn-sm btn-outline-danger">
+          Delete Poll
+        </a>
+        {% endif %}
+        
+      </div>
+    {% endif %}
+
+  </div>
+
 </div>
+
+{% endfor %}
+
+</div>
+
 {% endblock content %}
+{% comment %} 
+🎓 Interview-ready explanation
+“I used Bootstrap flex utilities like d-flex, justify-content-center,
+ and align-items-center to align interactive elements consistently without custom CSS.”
+“I used Bootstrap flex utilities and contextual components to visually differentiate interactive
+ and non-interactive poll options without custom CSS.”
+ “I improved the login form UX using Bootstrap’s grid, card, and utility classes without modifying
+  the backend authentication logic.”
+  “I redesigned the signup form using Bootstrap’s card, spacing utilities, and alert components while
+   keeping the Django form handling unchanged.”
+“I improved the form usability using Bootstrap cards, spacing utilities, and form controls while keeping 
+the original Django form handling intact.”
+“I redesigned the poll detail page using Bootstrap’s grid and card components to separate concerns visually 
+while keeping the existing Django data flow and Chart.js logic unchanged.”
+“I converted raw analytics data into a card-based dashboard using Bootstrap’s grid system to improve readability
+ and user experience without modifying backend logic.” 
+“I optimized the option cards for compactness by adjusting
+ Bootstrap spacing and typography utilities without custom CSS.”
+
+ I implemented a “hot poll” feature by dynamically identifying the poll with the highest votes on the backend and 
+ highlighting it on the home page, without creating a separate page or duplicating logic.
+ {% endcomment %}
