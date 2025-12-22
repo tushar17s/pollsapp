@@ -18,6 +18,8 @@ This project was built to deeply understand Django ORM, authentication, authoriz
 - Hot poll highlighting based on vote count
 - User-specific dashboard with analytics
 - REST APIs built using Django REST Framework
+### Hot Poll Logic
+The “Hot Poll” is dynamically determined using an engagement score based on weighted interactions (votes and comments). This score is computed at runtime using Django ORM aggregation without storing derived data.
 
 ---
 
