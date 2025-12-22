@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout 
 from .models import Poll , PollOption , Vote , comment
-from django.db.models import Count
+from django.db.models import Count,F
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from . serializers import PollSerializer , ResultAPISerializer
@@ -14,7 +14,12 @@ from django.shortcuts import get_object_or_404
 # Create your views here.
 def home(request) :
     polls = Poll.objects.annotate(total_vote=Count('vote')).order_by('-created_at')
-    hot_poll = polls.first
+    hot_poll = Poll.objects.annotate(
+    vote_count=Count("vote", distinct=True),
+    comment_count=Count("comment", distinct=True),
+    ).annotate(
+        hot_score=F("vote_count") * 2 + F("comment_count")
+    ).order_by("-hot_score").first
     # checking if user voted or not 
     if request.user.is_authenticated :
         voted_polls=[]

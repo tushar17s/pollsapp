@@ -40,7 +40,7 @@
 {% if poll.id == hot_poll.id %}
 
   <div class="card-body">
-    <span class="badge bg-danger">🔥 Most Voted</span>
+    <span class="badge bg-danger">🔥 Hot Poll</span>
   </div>
 
 {% endif %}
@@ -171,4 +171,8 @@ while keeping the existing Django data flow and Chart.js logic unchanged.”
 
  I implemented a “hot poll” feature by dynamically identifying the poll with the highest votes on the backend and 
  highlighting it on the home page, without creating a separate page or duplicating logic.
- {% endcomment %}
+
+ I refined the hot poll logic by computing an engagement score using weighted ORM aggregation based on votes and comments, 
+ allowing the most interactive poll to be highlighted dynamically without storing derived data.
+ 
+{% endcomment %}
