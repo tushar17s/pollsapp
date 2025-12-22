@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 
 # Create your views here.
 def home(request) :
-    polls = Poll.objects.annotate(total_vote=Count('vote')).order_by('-total_vote')
+    polls = Poll.objects.annotate(total_vote=Count('vote')).order_by('-created_at')
     hot_poll = polls.first
     # checking if user voted or not 
     if request.user.is_authenticated :
@@ -106,9 +106,16 @@ def medashboard(request):
     
         total_polls = Poll.objects.filter(created_by=request.user).count()
         polls  = Poll.objects.filter(created_by=request.user).annotate(total_vote=Count('vote'))
-        
+        voted_polls_count = Vote.objects.filter(user=request.user).count()
+        voted_polls=Vote.objects.filter(user=request.user).values_list('poll_id',flat=True)
+        all_polls_id=Poll.objects.values_list('id',flat=True)
+        all_polls=Poll.objects.all()
         return render(request,'base/medashboard.html',{'total_polls':total_polls,
                                                        'polls':polls,
+                                                       "voted_polls" : voted_polls,
+                                                       "voted_polls_count":voted_polls_count,
+                                                       "all_polls_id":all_polls_id,
+                                                       "all_polls" : all_polls
                                                        })
         
 @login_required

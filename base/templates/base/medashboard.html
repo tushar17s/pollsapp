@@ -59,7 +59,14 @@
         </div>
       </div>
     </div>
-
+    <div class="col-md-4">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h6 class="text-muted mb-1">Total Polls Voted</h6>
+          <h2 class="fw-bold">{{ voted_polls_count }}</h2>
+        </div>
+      </div>
+    </div>
     <div class="col-md-8">
       <div class="card shadow-sm">
         <div class="card-body">
@@ -70,7 +77,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- 🔹 POLLS LIST -->
@@ -107,6 +113,38 @@
 
   </div>
 
+  <div class="card shadow-sm">
+
+    <div class="card-body">
+      <h5 class="card-title mb-3">Polls You Voted</h5>
+
+      {% if voted_polls %}
+        {% for item in all_polls %}
+          <div class="d-flex justify-content-between align-items-center
+                      border-bottom py-3">
+            {% if item.id in voted_polls %}
+            <div>
+              <a href="{% url 'detail' item.id %}" class="fw-semibold">
+                {{ item.title }}
+              </a>
+              <div class="small text-muted">
+                Created on {{ item.created_at }}
+              </div>
+            </div>
+            {% endif %}
+            {% comment %} <span class="badge bg-primary rounded-pill">
+              {{ item.total_vote }} votes
+            </span> {% endcomment %}
+
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted mb-0">You haven’t voted any polls yet.</p>
+      {% endif %}
+
+    </div>
+
+  </div>
 </div>
 {% endif %}
 {% endblock %}
