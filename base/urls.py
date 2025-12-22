@@ -14,6 +14,7 @@ urlpatterns = [
     path('detail/<int:poll_id>/', views.poll_detail , name = 'detail' ),
     path('comment/<int:poll_id>/', views.comment_func , name = 'comment' ),
     path('hide/<int:comment_id>/<int:poll_id>/', views.hide_comment , name = 'hide_comment' ),
+    path('edit/<int:comment_id>/<int:poll_id>/', views.edit_comment , name = 'edit_comment' ),
     path('undo/<int:poll_id>/', views.undo_vote , name = 'undo' ),
     path('delete/<int:poll_id>/', views.delete_poll , name = 'delete_poll' ),
     path('api/polls/',PollListAPIView.as_view(),name="api_view"),

@@ -14,15 +14,16 @@
     <!-- 🔹 LEFT: Poll Details -->
     <div class="col-lg-7">
 
+      <!-- Poll Card -->
       <div class="card shadow-sm">
 
-        <!-- Header -->
-        <div class="card-header text-muted">
-          Poll created by <b>{{ poll.created_by }}</b>
-          <span class="float-end">{{ poll.created_at }}</span>
+        <div class="card-header text-muted d-flex justify-content-between">
+          <span>
+            Poll created by <b>{{ poll.created_by }}</b>
+          </span>
+          <span>{{ poll.created_at }}</span>
         </div>
 
-        <!-- Body -->
         <div class="card-body">
 
           <h4 class="card-title">{{ poll.title }}</h4>
@@ -36,12 +37,12 @@
 
           <!-- Options & Votes -->
           {% for opt in option %}
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <span>{{ opt.option_text }}</span>
-              <span class="badge bg-primary">
-                {{ opt.vote_counts }} votes ({{ opt.percentage }}%)
-              </span>
-            </div>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span>{{ opt.option_text }}</span>
+            <span class="badge bg-primary">
+              {{ opt.vote_counts }} votes ({{ opt.percentage }}%)
+            </span>
+          </div>
           {% endfor %}
 
           <hr>
@@ -49,70 +50,125 @@
           <p class="fw-bold">
             Total Votes: {{ total_votes }}
           </p>
-          {% if request.user == poll.created_by %}
-        <a href="{% url 'delete_poll' poll.id %}" class="btn btn-sm btn-outline-danger">
-          Delete Poll
-        </a>
-        {% endif %}
-        </div>
 
+          {% if request.user == poll.created_by %}
+          <a href="{% url 'delete_poll' poll.id %}"
+             class="btn btn-sm btn-outline-danger">
+            Delete Poll
+          </a>
+          {% endif %}
+
+        </div>
       </div>
 
-      <!-- 💬 Comment Box -->
+      <!-- 💬 Add Comment -->
       <div class="card shadow-sm mt-4">
-
         <div class="card-body">
           <h5 class="mb-3">Add Your View</h5>
 
           <form action="{% url 'comment' poll.id %}" method="post">
             {% csrf_token %}
-
             <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Write your views here"
-                name="message"
-                required
-              >
+              <input type="text"
+                     name="message"
+                     class="form-control"
+                     placeholder="Write your views here"
+                     required>
               <button class="btn btn-success">Post</button>
             </div>
           </form>
-
         </div>
       </div>
 
       <!-- 📝 Comments -->
       {% if comments %}
       <div class="card shadow-sm mt-4">
-
         <div class="card-body">
+
           <h5 class="mb-3">Recent Views</h5>
 
           {% for comment in comments %}
-            <div class="border rounded p-2 mb-2">
+          <div class="border rounded p-2 mb-2">
 
-              <p class="mb-1">{{ comment.comment_text }}</p>
+            <p class="mb-1">{{ comment.comment_text }}</p>
 
-              <small class="text-muted">
-                by <b>{{ comment.user.username }}</b>
-                at {{ comment.commented_on }}
-              </small>
+            <small class="text-muted">
+              by <b>{{ comment.user.username }}</b>
+              at {{ comment.commented_on }}
+            </small>
+
+            <div class="mt-1">
 
               {% if request.user == comment.poll.created_by %}
-                <div>
-                  <a href="{% url 'hide_comment' comment.id poll.id %}"
-                     class="btn btn-sm btn-outline-danger mt-1">
-                    Hide
-                  </a>
-                </div>
+              <a href="{% url 'hide_comment' comment.id poll.id %}"
+                 class="btn btn-sm btn-outline-danger">
+                Hide
+              </a>
+              {% endif %}
+
+              {% if request.user == comment.user %}
+              <button class="btn btn-sm btn-outline-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editCommentModal{{ comment.id }}">
+                Edit
+              </button>
               {% endif %}
 
             </div>
+
+          </div>
+
+          <!-- ✏️ Edit Comment Modal -->
+          {% if request.user == comment.user %}
+          <div class="modal fade"
+               id="editCommentModal{{ comment.id }}"
+               tabindex="-1"
+               aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit Comment</h5>
+                  <button type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"></button>
+                </div>
+
+                <form action="{% url 'edit_comment' comment.id poll.id %}"
+                      method="post">
+                  {% csrf_token %}
+
+                  <div class="modal-body">
+                    <input type="text"
+                           name="message"
+                           class="form-control"
+                           value="{{ comment.comment_text }}"
+                           required>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                      Cancel
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary">
+                      Save Changes
+                    </button>
+                  </div>
+
+                </form>
+
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
           {% endfor %}
 
         </div>
-
       </div>
       {% endif %}
 
@@ -120,22 +176,17 @@
 
     <!-- 🔹 RIGHT: Chart -->
     <div class="col-lg-5">
-
       <div class="card shadow-sm h-100">
         <div class="card-body">
           <h5 class="text-center mb-3">Poll Result Chart</h5>
-
           <div style="height:300px;">
             <canvas id="pollchart"></canvas>
           </div>
-
         </div>
       </div>
-
     </div>
 
   </div>
-
 </div>
 
 <!-- Chart.js -->

@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.models import User 
 from django.http import HttpResponse
 from django.contrib import messages
@@ -211,6 +211,21 @@ def hide_comment(request,comment_id,poll_id):
     message = comment.objects.get(id=comment_id)
     message.delete()
     return redirect("detail", poll_id=poll_id)
+
+@login_required
+def edit_comment(request, comment_id, poll_id):
+    if request.method == 'POST':
+        text = request.POST.get("message")
+
+        comment_obj = get_object_or_404(comment, id=comment_id)
+
+        comment_obj.comment_text = text
+        comment_obj.save()
+
+        return redirect("detail", poll_id=poll_id)
+
+    return redirect("detail", poll_id=poll_id)
+
 
 @login_required
 def undo_vote(request,poll_id):
