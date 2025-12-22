@@ -100,10 +100,18 @@ def dashboard(request):
         top_poll = Poll.objects.annotate(vote_count=Count('vote')).order_by('-vote').first 
         poll_per_category = Poll.objects.values('category').annotate(total_poll=Count('id'))
         # it says : poll.vote_count
+        hot_poll = Poll.objects.annotate(
+            vote_count=Count("vote", distinct=True),
+            comment_count=Count("comment", distinct=True),
+            ).annotate(
+                hot_score=F("vote_count") * 2 + F("comment_count")
+            ).order_by("-hot_score").first
         return render(request,"base/dashboard.html",{'total_polls':total_polls,
                                                      'total_votes':total_votes,'total_users':total_users,
                                                      'top_poll':top_poll,
-                                                     'category_wise':poll_per_category})
+                                                     'category_wise':poll_per_category,
+                                                     'hot_poll':hot_poll
+                                                     })
     return redirect('login')
 
 @login_required

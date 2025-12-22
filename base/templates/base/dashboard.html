@@ -49,7 +49,41 @@
 
   </div>
 
+{% comment %} hot poll {% endcomment %}
+   <div class="card shadow-sm border-0">
 
+  <div class="card-body">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center mb-2">
+      <span class="badge bg-danger me-2">🔥 Hot</span>
+      <h6 class="mb-0 fw-semibold text-muted">
+        Most Active Poll
+      </h6>
+    </div>
+
+    <!-- Poll Title -->
+    <h5 class="fw-bold mb-2">
+      <a href="{% url 'detail' hot_poll.id %}"
+         class="text-decoration-none text-dark">
+        {{ hot_poll.title }}
+      </a>
+    </h5>
+
+    <!-- Description / Hint -->
+    <p class="text-muted mb-3 small">
+      High engagement based on votes and comments
+    </p>
+
+    <!-- Action -->
+    <a href="{% url 'detail' hot_poll.id %}"
+       class="btn btn-sm btn-outline-danger">
+      View Poll
+    </a>
+
+  </div>
+
+</div>
   <!-- 🔹 POLLS PER CATEGORY -->
   <div class="card shadow-sm">
     <div class="card-body">
@@ -66,7 +100,6 @@
 
     </div>
   </div>
-
 </div>
 
 {% endblock %}
